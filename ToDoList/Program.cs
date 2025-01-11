@@ -1,11 +1,8 @@
-﻿var app = new ToDoApp();
+﻿using ToDoList.FileHandling;
+
+var app = new ToDoApp(
+    new FileHandler(),
+    new UserInteractor());
 app.Run();
+Console.ReadKey();
 
-public class ToDoApp
-{
-    private const string SettingsPath = "Settings.settings";
-    public void Run()
-    {
-
-    }
-}
