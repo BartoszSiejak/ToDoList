@@ -9,6 +9,23 @@ public class UserInteractor : IUserInteractor
 
     public int AskForInt(string message) => int.Parse(GetValidStringFromUser(ValidateAge, message));
 
+    public int ShowMenuAndGetValidOption()
+    {
+        Print("1. Show TODOs");
+        Print("2. Create TODO");
+        Print("3. Settings");
+        Print("4. Exit");
+
+        var input = GetValidStringFromUser(ValidateMenuOption, "Select option:");
+
+        return int.Parse(input);
+    }
+
+    public void ClearText()
+    {
+        Console.Clear();
+    }
+
     private string GetValidStringFromUser(Func<string?, bool> IsValid, string message)
     {
         string? result;
@@ -73,6 +90,30 @@ public class UserInteractor : IUserInteractor
         }
 
         return true;
+    }
+
+    private bool ValidateMenuOption(string? input)
+    {
+        if (input is null)
+        {
+            Print(NullInputWarning);
+            return false;
+        }
+
+        var result = int.TryParse(input, out int value);
+
+        if (result == false)
+        {
+            Print("Invalid number! Must contain digits only.");
+            return false;
+        }
+        else if (value > 0 && value < 5)
+        {
+            return true;
+        }
+
+        Print("Invalid option!");
+        return false;
     }
 
 }

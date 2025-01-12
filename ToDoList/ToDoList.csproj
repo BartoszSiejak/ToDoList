@@ -12,17 +12,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Settings\settings.Designer.cs">
+    <Compile Update="Settings\UserSettings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
+      <DependentUpon>UserSettings.settings</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Settings\Settings.settings">
+    <None Update="Settings\UserSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>settings.Designer.cs</LastGenOutput>
+      <LastGenOutput>UserSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
