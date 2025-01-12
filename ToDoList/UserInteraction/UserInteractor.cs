@@ -1,29 +1,46 @@
 ﻿using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Diagnostics;
+using ToDoList.Data;
 
 namespace ToDoList.UserInteraction;
 
 public class UserInteractor : IUserInteractor
 {
     private const string NullInputWarning = "Name cannot be null! Did you press CTRL + Z?";
+    private const int MinToDoSize = 5;
     public void Print(string message) => Console.WriteLine(message);
-
     public string AskForSingleWord(string message) => GetValidStringFromUser(ValidateSingleWord, message);
+    public string AskForValidToDo(string message) => GetValidStringFromUser(ValidateToDo, message);
 
     public int AskForInt(string message) => int.Parse(GetValidStringFromUser(ValidateAge, message));
-
-    public int ShowMenuAndGetValidOption(IMenu menu)
+    public void WaitForKey()
     {
-        int result = -1;
-        Print(menu.ToString());
+        Print("Press any key to continue...");
+        Console.ReadKey();
+    }
+
+    public int GetValidMenuOption(int max)
+    {
         do
         {
             var input = GetValidStringFromUser(IsValidInt, "Select option:");
-            result = int.Parse(input);
-        }
-        while (!ValidateMenuLength(result, menu));
-       return result;
+            var result = int.Parse(input);
 
+            if(result <= 0 ||  result > max)
+            {
+                Print("Invalid choice!");
+            }
+            else
+            {
+                return result;
+            }
+        }
+        while (true);      
+    }
+
+    public void PrintMenu(IEnumerable<string> menu)
+    {
+        Print(string.Join(Environment.NewLine, menu));
     }
 
     public void ClearText()
@@ -36,7 +53,6 @@ public class UserInteractor : IUserInteractor
         Print("Press any key to exit...");
         Console.ReadKey();
     }
-
     private string GetValidStringFromUser(Func<string?, bool> IsValid, string message)
     {
         string? result;
@@ -121,15 +137,28 @@ public class UserInteractor : IUserInteractor
 
         return true;
     }
-    private bool ValidateMenuLength(int input, IMenu menu)
+
+    private bool ValidateToDo(string? input)
     {
-        if (input <= 0 || input > menu.Length)
+        if (input is null)
         {
-            Print("Invalid option");
+            Print(NullInputWarning);
             return false;
         }
 
-        return true;
+        if (!char.IsUpper(input.First()))
+        {
+            Print("Todo must begin with a uppercase letter.");
+            return false;
+        }
+
+        if (input.Length > MinToDoSize)
+        {
+            return true;
+        }
+
+        Print($"Todo length must be bigger than {MinToDoSize}!");
+        return false;
     }
 
 }

@@ -1,4 +1,5 @@
 ﻿using System.Net.WebSockets;
+using ToDoList.Data;
 using ToDoList.FileHandling;
 using ToDoList.Settings;
 using ToDoList.UserInteraction;
@@ -10,11 +11,8 @@ var app = new ToDoApp(
     new FileHandler(),
     userInteractor,
     userConfigurator,
-    new MainMenu(
-        userInteractor,
-        new SettingsMenu(
-            userInteractor,
-            userConfigurator)));
+    new MenuMapping(),
+    new ToDoCollection());
 
 app.Run();
 
