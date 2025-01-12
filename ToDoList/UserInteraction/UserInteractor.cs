@@ -1,4 +1,7 @@
-﻿namespace ToDoList.UserInteraction;
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Diagnostics;
+
+namespace ToDoList.UserInteraction;
 
 public class UserInteractor : IUserInteractor
 {
@@ -9,21 +12,29 @@ public class UserInteractor : IUserInteractor
 
     public int AskForInt(string message) => int.Parse(GetValidStringFromUser(ValidateAge, message));
 
-    public int ShowMenuAndGetValidOption()
+    public int ShowMenuAndGetValidOption(IMenu menu)
     {
-        Print("1. Show TODOs");
-        Print("2. Create TODO");
-        Print("3. Settings");
-        Print("4. Exit");
+        int result = -1;
+        Print(menu.ToString());
+        do
+        {
+            var input = GetValidStringFromUser(IsValidInt, "Select option:");
+            result = int.Parse(input);
+        }
+        while (!ValidateMenuLength(result, menu));
+       return result;
 
-        var input = GetValidStringFromUser(ValidateMenuOption, "Select option:");
-
-        return int.Parse(input);
     }
 
     public void ClearText()
     {
         Console.Clear();
+    }
+
+    public void ExitMessage()
+    {
+        Print("Press any key to exit...");
+        Console.ReadKey();
     }
 
     private string GetValidStringFromUser(Func<string?, bool> IsValid, string message)
@@ -92,7 +103,7 @@ public class UserInteractor : IUserInteractor
         return true;
     }
 
-    private bool ValidateMenuOption(string? input)
+    private bool IsValidInt(string? input)
     {
         if (input is null)
         {
@@ -100,20 +111,25 @@ public class UserInteractor : IUserInteractor
             return false;
         }
 
-        var result = int.TryParse(input, out int value);
+        var result = int.TryParse(input, out _);
 
         if (result == false)
         {
             Print("Invalid number! Must contain digits only.");
             return false;
         }
-        else if (value > 0 && value < 5)
+
+        return true;
+    }
+    private bool ValidateMenuLength(int input, IMenu menu)
+    {
+        if (input <= 0 || input > menu.Length)
         {
-            return true;
+            Print("Invalid option");
+            return false;
         }
 
-        Print("Invalid option!");
-        return false;
+        return true;
     }
 
 }

@@ -12,4 +12,11 @@ public class UserConfigurator : IUserConfigurator
         UserSettings.Default.UserAge = age;
         UserSettings.Default.Save();
     }
+    
+    public void ResetUserData()
+    {
+        UserSettings.Default.UserName = string.Empty;
+        UserSettings.Default.UserAge = 0;
+        UserSettings.Default.Save();
+    }
 }

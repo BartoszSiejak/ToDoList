@@ -6,4 +6,5 @@ public interface IUserConfigurator
     string GetUserName();
     int GetUserAge();
     void SaveUserData(string name, int age);
+    void ResetUserData();
 }
