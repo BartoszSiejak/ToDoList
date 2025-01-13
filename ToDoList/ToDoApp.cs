@@ -1,5 +1,7 @@
 ﻿using ToDoList.Data;
 using ToDoList.FileHandling;
+using ToDoList.JsonConversion;
+using ToDoList.Mapping;
 using ToDoList.Settings;
 using ToDoList.UserInteraction;
 
@@ -7,19 +9,34 @@ namespace ToDoList;
 
 public class ToDoApp(
     IFileHandler fileHandler,
+    IJsonConverter jsonConverter,
     IUserInteractor userInteractor,
     IUserConfigurator userConfigurator,
     IMenuMapping menuMapping,
     IToDoCollection toDos)
 {
     private readonly IFileHandler _fileHandler = fileHandler;
+    private readonly IJsonConverter _jsonConverter = jsonConverter;
     private readonly IUserInteractor _userInteractor = userInteractor;
     private readonly IUserConfigurator _userConfigurator = userConfigurator;
     private readonly IMenuMapping _menuMapping = menuMapping;
-    private readonly IToDoCollection _toDos = toDos;
+    public IToDoCollection ToDos { get; set; } = toDos;
 
     public void Run()
     {
+        if (_fileHandler.IsExist())
+        {
+            try 
+            {
+                var data = _fileHandler.Read();
+                ToDos.List = _jsonConverter.JsonToObject(data);
+            }
+            catch
+            {
+                _userInteractor.Print("Data are broken. ToDoList will be empty!");
+                _userInteractor.WaitForKey();
+            }  
+        }
 
         do
         {
@@ -70,30 +87,25 @@ public class ToDoApp(
     private void ShowTODOs()
     {
         _userInteractor.ClearText();
-        _userInteractor.Print(_toDos.ToString());
+        _userInteractor.Print(ToDos.ToString());
 
-        if (!_toDos.IsEmpty())
+        if (!ToDos.IsEmpty())
         {
             var canIDelete = _userInteractor.AskForDeleteToDo("Do you want delete todo?(y/n)");
 
             if (canIDelete)
             {
                 RemoveToDo();
+                SaveDataToStorage();
             }
         }
     }
-
-    private void ResetUserData()
-    {
-        _userConfigurator.ResetUserData();
-        _userInteractor.Print("User data has been removed!");
-    }
-
     private void CreateTODO()
     {
         _userInteractor.ClearText();
         var todoDescription = _userInteractor.AskForValidToDo("Enter your TODO:");
-        _toDos.Add(todoDescription);
+        ToDos.Add(todoDescription);
+        SaveDataToStorage();
         _userInteractor.Print("ToDo has been added!");
     }
 
@@ -106,8 +118,8 @@ public class ToDoApp(
 
     private void RemoveToDo()
     {
-        var toDoID = _userInteractor.AskForValidToDoID("Which ID?", _toDos.Count);
-        _toDos.RemoveAtIndex(toDoID);
+        var toDoID = _userInteractor.AskForValidToDoID("Which ID?", ToDos.Count);
+        ToDos.RemoveAtIndex(toDoID);
         _userInteractor.Print("ToDo has been deleted!");
     }
 
@@ -127,5 +139,16 @@ public class ToDoApp(
                 ResetUserData();
                 break;
         }
+    }
+
+    private void ResetUserData()
+    {
+        _userConfigurator.ResetUserData();
+        _userInteractor.Print("User data has been removed!");
+    }
+    private void SaveDataToStorage()
+    {
+        var data = _jsonConverter.ObjectToJson(ToDos.List);
+        _fileHandler.Write(data);
     }
 }

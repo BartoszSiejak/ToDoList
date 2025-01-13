@@ -2,19 +2,29 @@
 using ToDoList;
 using ToDoList.Data;
 using ToDoList.FileHandling;
+using ToDoList.Mapping;
 using ToDoList.Settings;
 using ToDoList.UserInteraction;
+using ToDoList.JsonConversion;
 
-var userInteractor = new UserInteractor();
-var userConfigurator = new UserConfigurator();
+const string FilePath = "data.json";
 
 var app = new ToDoApp(
-    new FileHandler(),
-    userInteractor,
-    userConfigurator,
+    new FileHandler(FilePath),
+    new JsonConverter(),
+    new UserInteractor(),
+    new UserConfigurator(),
     new MenuMapping(),
     new ToDoCollection());
 
-app.Run();
+
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Exception was thrown. Message: " + ex.Message);
+}
 
 

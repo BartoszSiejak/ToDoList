@@ -3,15 +3,15 @@ namespace ToDoList.UserInteraction;
 
 public interface IUserInteractor
 {
+     void Print(string message);
+     void WaitForKey();
+    void ClearText();
+     void ExitMessage();
+     void PrintMenu(IEnumerable<string> menu);
     int AskForInt(string message);
     string AskForSingleWord(string message);
-    public void Print(string message);
-    int GetValidMenuOption(int max);
-    void ClearText();
-    public void ExitMessage();
-    public string AskForValidToDo(string message);
-    public void WaitForKey();
-    public void PrintMenu(IEnumerable<string> menu);
     bool AskForDeleteToDo(string message);
     int AskForValidToDoID(string message, int maxId);
+     string AskForValidToDo(string message);
+    int GetValidMenuOption(int max);
 }

@@ -2,5 +2,7 @@
 
 public interface IFileHandler
 {
-    bool IsExist(string path);
+    string Read();
+    void Write(string value);
+    bool IsExist();
 }

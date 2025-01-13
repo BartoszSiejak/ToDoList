@@ -9,8 +9,27 @@ public class UserInteractor : IUserInteractor
     private const string NullInputWarning = "Name cannot be null! Did you press CTRL + Z?";
     private const int MinToDoSize = 5;
     public void Print(string message) => Console.WriteLine(message);
+    public void WaitForKey()
+    {
+        Print("Press any key to continue...");
+        Console.ReadKey();
+    }
+    public void ClearText()
+    {
+        Console.Clear();
+    }
+    public void ExitMessage()
+    {
+        Print("Press any key to exit...");
+        Console.ReadKey();
+    }
+    public void PrintMenu(IEnumerable<string> menu)
+    {
+        Print(string.Join(Environment.NewLine, menu));
+    }
     public string AskForSingleWord(string message) => GetValidStringFromUser(ValidateSingleWord, message);
     public string AskForValidToDo(string message) => GetValidStringFromUser(ValidateToDo, message);
+    public int AskForInt(string message) => int.Parse(GetValidStringFromUser(ValidateAge, message));
     public bool AskForDeleteToDo(string message)
     {
         var validInput = GetValidStringFromUser(ValidateYesOrNo, message);
@@ -43,6 +62,25 @@ public class UserInteractor : IUserInteractor
         while (true);
     }
 
+    public int GetValidMenuOption(int max)
+    {
+        do
+        {
+            var input = GetValidStringFromUser(IsValidInt, "Select option:");
+            var result = int.Parse(input);
+
+            if (result <= 0 || result > max)
+            {
+                Print("Invalid choice!");
+            }
+            else
+            {
+                return result;
+            }
+        }
+        while (true);
+    }
+
     private bool ValidateYesOrNo(string? input)
     {
         if (string.Equals(input, "y", StringComparison.OrdinalIgnoreCase) || string.Equals(input, "n", StringComparison.OrdinalIgnoreCase))
@@ -52,48 +90,6 @@ public class UserInteractor : IUserInteractor
 
         Print("Invalid input. Type y for yes or n for no.");
         return false;
-    }
-
-    public int AskForInt(string message) => int.Parse(GetValidStringFromUser(ValidateAge, message));
-    public void WaitForKey()
-    {
-        Print("Press any key to continue...");
-        Console.ReadKey();
-    }
-
-    public int GetValidMenuOption(int max)
-    {
-        do
-        {
-            var input = GetValidStringFromUser(IsValidInt, "Select option:");
-            var result = int.Parse(input);
-
-            if(result <= 0 ||  result > max)
-            {
-                Print("Invalid choice!");
-            }
-            else
-            {
-                return result;
-            }
-        }
-        while (true);      
-    }
-
-    public void PrintMenu(IEnumerable<string> menu)
-    {
-        Print(string.Join(Environment.NewLine, menu));
-    }
-
-    public void ClearText()
-    {
-        Console.Clear();
-    }
-
-    public void ExitMessage()
-    {
-        Print("Press any key to exit...");
-        Console.ReadKey();
     }
     private string GetValidStringFromUser(Func<string?, bool> IsValid, string message)
     {

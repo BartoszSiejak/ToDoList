@@ -2,10 +2,10 @@
 
 public interface IToDoCollection
 {
+    List<ToDo> List { get; set; }
     int Count { get; }
-    public void Add(string description);
-    public bool IsEmpty();
-    public void Remove(string description);
-    public void RemoveAtIndex(int index);
-    public string ToString();
+     void Add(string description);
+     bool IsEmpty();
+     void RemoveAtIndex(int index);
+    string ToString();
 }

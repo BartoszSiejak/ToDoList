@@ -2,39 +2,33 @@
 
 public class ToDoCollection : IToDoCollection
 {
-    private readonly List<ToDo> _items;
+   public List<ToDo> List { get; set; }
 
     public ToDoCollection()
     {
-        _items = [];
+        List = [];
     }
 
-    public int Count => _items.Count;
+    public int Count => List.Count;
 
     public void Add(string description)
     {
-        _items.Add(new ToDo(description));
+        List.Add(new ToDo(description));
     }
 
     public bool IsEmpty()
     {
-        return _items.Count == 0;
+        return List.Count == 0;
     }
-
-    public void Remove(string description)
-    {
-        _items.Remove(new ToDo(description));
-    }
-
     public void RemoveAtIndex(int index)
     {
-        _items.RemoveAt(index);
+        List.RemoveAt(index);
     }
 
     public override string ToString()
     {
         var index = 0;
-        var result = _items.Select(todo => $"{++index}. {todo.Description}");
+        var result = List.Select(todo => $"{++index}. {todo.Description}");
 
         if(!result.Any())
         {
