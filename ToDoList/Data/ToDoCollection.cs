@@ -9,9 +9,16 @@ public class ToDoCollection : IToDoCollection
         _items = [];
     }
 
+    public int Count => _items.Count;
+
     public void Add(string description)
     {
         _items.Add(new ToDo(description));
+    }
+
+    public bool IsEmpty()
+    {
+        return _items.Count == 0;
     }
 
     public void Remove(string description)

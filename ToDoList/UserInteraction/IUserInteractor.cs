@@ -12,4 +12,6 @@ public interface IUserInteractor
     public string AskForValidToDo(string message);
     public void WaitForKey();
     public void PrintMenu(IEnumerable<string> menu);
+    bool AskForDeleteToDo(string message);
+    int AskForValidToDoID(string message, int maxId);
 }

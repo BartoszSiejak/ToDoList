@@ -3,6 +3,8 @@ using ToDoList.FileHandling;
 using ToDoList.Settings;
 using ToDoList.UserInteraction;
 
+namespace ToDoList;
+
 public class ToDoApp(
     IFileHandler fileHandler,
     IUserInteractor userInteractor,
@@ -18,20 +20,21 @@ public class ToDoApp(
 
     public void Run()
     {
-        if (!_userConfigurator.Exist())
-        {
-            InitUser();
-        }
 
         do
         {
+            if (!_userConfigurator.Exist())
+            {
+                InitUser();
+            }
+
             _userInteractor.ClearText();
             _userInteractor.Print($"Hi {_userConfigurator.GetUserName()}! You're {_userConfigurator.GetUserAge()} years old.");
             _userInteractor.Print($"What you want to do?");
             _userInteractor.PrintMenu(_menuMapping.MainMenu);
             var userOption = _userInteractor.GetValidMenuOption(_menuMapping.MainMenu.Count());
             MainMenuHandling(userOption);
-
+            _userInteractor.WaitForKey();
         }
         while (true);
 
@@ -64,12 +67,48 @@ public class ToDoApp(
                 break;
         }
     }
+    private void ShowTODOs()
+    {
+        _userInteractor.ClearText();
+        _userInteractor.Print(_toDos.ToString());
+
+        if (!_toDos.IsEmpty())
+        {
+            var canIDelete = _userInteractor.AskForDeleteToDo("Do you want delete todo?(y/n)");
+
+            if (canIDelete)
+            {
+                RemoveToDo();
+            }
+        }
+    }
+
+    private void ResetUserData()
+    {
+        _userConfigurator.ResetUserData();
+        _userInteractor.Print("User data has been removed!");
+    }
+
+    private void CreateTODO()
+    {
+        _userInteractor.ClearText();
+        var todoDescription = _userInteractor.AskForValidToDo("Enter your TODO:");
+        _toDos.Add(todoDescription);
+        _userInteractor.Print("ToDo has been added!");
+    }
 
     private void ExitApplication()
     {
         _userInteractor.ClearText();
         _userInteractor.ExitMessage();
         Environment.Exit(0);
+    }
+
+    private void RemoveToDo()
+    {
+        var toDoID = _userInteractor.AskForValidToDoID("Which ID?", _toDos.Count);
+        _toDos.RemoveAtIndex(toDoID);
+        _userInteractor.Print("ToDo has been deleted!");
     }
 
     private void ShowSettings()
@@ -89,33 +128,4 @@ public class ToDoApp(
                 break;
         }
     }
-    private void ResetUserData()
-    {
-        _userConfigurator.ResetUserData();
-        _userInteractor.Print("User data has been removed!");
-        _userInteractor.Print("Restart your application.");
-        _userInteractor.WaitForKey();
-        ExitApplication();
-
-    }
-
-    private void CreateTODO()
-    {
-        _userInteractor.ClearText();
-        var todoDescription = _userInteractor.AskForValidToDo("Enter your TODO:");
-        toDos.Add(todoDescription);
-        _userInteractor.Print("ToDo has been added!");
-        _userInteractor.WaitForKey();
-    }
-
-    private void ShowTODOs()
-    {
-        _userInteractor.ClearText();
-        _userInteractor.Print(toDos.ToString());
-        _userInteractor.WaitForKey();
-    }
-
- 
-
-
 }

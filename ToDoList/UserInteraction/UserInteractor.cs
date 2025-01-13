@@ -11,6 +11,48 @@ public class UserInteractor : IUserInteractor
     public void Print(string message) => Console.WriteLine(message);
     public string AskForSingleWord(string message) => GetValidStringFromUser(ValidateSingleWord, message);
     public string AskForValidToDo(string message) => GetValidStringFromUser(ValidateToDo, message);
+    public bool AskForDeleteToDo(string message)
+    {
+        var validInput = GetValidStringFromUser(ValidateYesOrNo, message);
+
+        if(validInput == "y" || validInput == "Y")
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public int AskForValidToDoID(string message, int maxId)
+    {
+        do
+        {
+            var input = GetValidStringFromUser(IsValidInt, message);
+            var result = int.Parse(input);
+            result--;
+
+            if (result < 0 || result >= maxId)
+            {
+                Print("Selected ID does not exist.");
+            }
+            else
+            {
+                return result;
+            }
+        }
+        while (true);
+    }
+
+    private bool ValidateYesOrNo(string? input)
+    {
+        if (string.Equals(input, "y", StringComparison.OrdinalIgnoreCase) || string.Equals(input, "n", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        Print("Invalid input. Type y for yes or n for no.");
+        return false;
+    }
 
     public int AskForInt(string message) => int.Parse(GetValidStringFromUser(ValidateAge, message));
     public void WaitForKey()
@@ -160,5 +202,4 @@ public class UserInteractor : IUserInteractor
         Print($"Todo length must be bigger than {MinToDoSize}!");
         return false;
     }
-
 }
